@@ -1,0 +1,31 @@
+{
+  "name": "re-media-devices",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world"
+  },
+  "keywords": [
+    "BuckleScript"
+  ],
+  "author": "Celso Bonutti Filho",
+  "license": "MIT",
+  "devDependencies": {
+    "bs-platform": "^8.0.3"
+  },
+  "description": "Hello! w.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/celsobonutti/re-media-devices.git"
+  },
+  "bugs": {
+    "url": "https://github.com/celsobonutti/re-media-devices/issues"
+  },
+  "homepage": "https://github.com/celsobonutti/re-media-devices#readme"
+}
