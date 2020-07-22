@@ -1,74 +1,22 @@
-type constrain('a) =
-  | Simple('a)
-  | Constrain({
-      exact: 'a,
-      ideal: 'a,
-    });
+type videoConstraint_(_) =
+  | Bool: videoConstraint_(bool)
+  | Constraint: videoConstraint_(Constraints.Video.t);
 
-module AudioConstraints = {
-  [@bs.deriving abstract]
-  type t = {
-    [@bs.optional]
-    autoGainControl: constrain(bool),
-    [@bs.optional]
-    channelCount: constrain(int),
-    [@bs.optional]
-    echoCancellation: constrain(bool),
-    [@bs.optional]
-    latency: constrain(float),
-    [@bs.optional]
-    noiseSuppression: constrain(bool),
-    [@bs.optional]
-    sampleRate: constrain(int),
-    [@bs.optional]
-    sampleSize: constrain(int),
-    [@bs.optional]
-    volume: constrain(float),
-  };
-};
+type audioConstraint_(_) =
+  | Bool: audioConstraint_(bool)
+  | Constraint: audioConstraint_(Constraints.Audio.t);
 
-module VideoConstraints = {
-  [@bs.deriving jsConverter]
-  type facingModeOption = [ | `user | `environment | `left | `right];
-
-  type facingMode =
-    | Array(array(facingModeOption))
-    | Constrain(constrain(facingModeOption));
-
-  [@bs.deriving abstract]
-  type t = {
-    [@bs.optional]
-    aspectRatio: constrain(float),
-    [@bs.optional]
-    facingMode,
-    [@bs.optional]
-    frameRate: constrain(float),
-    [@bs.optional]
-    height: constrain(int),
-    [@bs.optional]
-    width: constrain(int),
-  };
-};
-
-[@bs.deriving accessors]
-type audioConstraints =
-  | Boolean(bool)
-  | Constraints(AudioConstraints.t);
-
-[@bs.deriving accessors]
-type videoConstraints =
-  | Boolean(bool)
-  | Constraints(VideoConstraints.t);
-
-type constraints = {
-  audio: option(audioConstraints),
-  video: option(videoConstraints),
+type constraints('audio, 'video) = {
+  audio: 'audio,
+  video: 'video,
 };
 
 [@bs.val] [@bs.scope ("window", "navigator", "mediaDevices")]
-external userMedia: constraints => Js.Promise.t(MediaStream.t) =
+external getUserMedia:
+  (
+    [@bs.ignore] audioConstraint_('audio),
+    [@bs.ignore] videoConstraint_('video),
+    constraints('audio, 'video)
+  ) =>
+  Js.Promise.t(MediaStream.t) =
   "getUserMedia";
-
-let getUserMedia = (~audio=?, ~video=?, ()) => {
-  userMedia({audio, video});
-};
