@@ -1,108 +1,105 @@
-type constrain('a) =
-  | Simple('a)
-  | Constrain({
-      exact: option('a),
-      ideal: option('a),
-    });
+module ConstrainBoolean = {
+  type t = {
+    exact: option(bool),
+    ideal: option(bool),
+  };
 
-type constrainWithArray('a) =
-  | Simple('a)
-  | Array(array('a))
-  | Constrain({
-      exact: option('a),
-      ideal: option('a),
-    });
-
-let map = (functor_: constrain('a), function_: 'a => 'b): constrain('b) => {
-  switch (functor_) {
-  | Simple(c) => Simple(function_(c))
-  | Constrain({exact, ideal}) =>
-    Constrain({
-      exact: Belt.Option.map(exact, c => function_(c)),
-      ideal: Belt.Option.map(ideal, c => function_(c)),
-    })
+  let makeSimple = value => {
+    {exact: None, ideal: Some(value)};
   };
 };
 
-let mapWithArray =
-    (functor_: constrainWithArray('a), function_: 'a => 'b)
-    : constrainWithArray('b) => {
-  switch (functor_) {
-  | Simple(c) => Simple(function_(c))
-  | Constrain({exact, ideal}) =>
-    Constrain({
-      exact: Belt.Option.map(exact, c => function_(c)),
-      ideal: Belt.Option.map(ideal, c => function_(c)),
-    })
-  | Array(elements) => Array(Belt.Array.map(elements, el => function_(el)))
+module ConstrainDouble = {
+  type t = {
+    exact: option(float),
+    ideal: option(float),
+    min: option(float),
+    max: option(float),
   };
+
+  let makeSimple = value => {
+    {ideal: Some(value), exact: None, min: None, max: None};
+  };
+};
+
+module ConstrainULong = {
+  type t = {
+    exact: option(int),
+    ideal: option(int),
+    min: option(int),
+    max: option(int),
+  };
+
+  let makeSimple = value => {
+    {ideal: Some(value), exact: None, min: None, max: None};
+  };
+};
+
+module ConstrainDOMString = {
+  type fields('a) = {
+    exact: option('a),
+    ideal: option('a),
+  };
+
+  type domString(_) =
+    | Single: domString(fields(string))
+    | Array: domString(fields(array(string)));
+
+  type t('a) = 'a;
+
+  let make: (domString('a), 'a) => 'a = (_kind, value) => value;
 };
 
 module Audio = {
-  [@bs.deriving abstract]
   type t = {
-    [@bs.optional]
-    autoGainControl: constrain(bool),
-    [@bs.optional]
-    channelCount: constrain(int),
-    [@bs.optional]
-    echoCancellation: constrain(bool),
-    [@bs.optional]
-    latency: constrain(float),
-    [@bs.optional]
-    noiseSuppression: constrain(bool),
-    [@bs.optional]
-    sampleRate: constrain(int),
-    [@bs.optional]
-    sampleSize: constrain(int),
-    [@bs.optional]
-    volume: constrain(float),
-  };
-
-  let make = t;
-};
-
-module Video = {
-  [@bs.deriving jsConverter]
-  type facingModeOption = [ | `user | `environment | `left | `right];
-
-  type facingMode = constrainWithArray(facingModeOption);
-
-  [@bs.deriving abstract]
-  type t = {
-    [@bs.optional]
-    aspectRatio: constrain(float),
-    [@bs.optional]
-    facingMode: Js.Nullable.t(constrainWithArray(string)),
-    [@bs.optional]
-    frameRate: constrain(float),
-    [@bs.optional]
-    height: constrain(int),
-    [@bs.optional]
-    width: constrain(int),
+    autoGainControl: option(ConstrainBoolean.t),
+    echoCancellation: option(ConstrainBoolean.t),
+    noiseSuppression: option(ConstrainBoolean.t),
+    latency: option(ConstrainDouble.t),
+    volume: option(ConstrainDouble.t),
+    channelCount: option(ConstrainULong.t),
+    sampleRate: option(ConstrainULong.t),
+    sampleSize: option(ConstrainULong.t),
   };
 
   let make =
       (
-        ~aspectRatio: option(constrain(float))=?,
-        ~frameRate: option(constrain(float))=?,
-        ~height: option(constrain(int))=?,
-        ~width: option(constrain(int))=?,
-        ~facingMode: option(constrainWithArray(facingModeOption))=?,
+        ~autoGainControl=?,
+        ~echoCancellation=?,
+        ~noiseSuppression=?,
+        ~latency=?,
+        ~volume=?,
+        ~channelCount=?,
+        ~sampleRate=?,
+        ~sampleSize=?,
         (),
       ) => {
-    t(
-      ~aspectRatio?,
-      ~frameRate?,
-      ~height?,
-      ~width?,
-      ~facingMode=
-        facingMode->Belt.Option.mapWithDefault(
-          Js.Nullable.null, facingModeConstrain =>
-          mapWithArray(facingModeConstrain, facingModeOptionToJs)
-          ->Js.Nullable.return
-        ),
-      (),
-    );
+    {
+      autoGainControl,
+      echoCancellation,
+      noiseSuppression,
+      latency,
+      volume,
+      channelCount,
+      sampleRate,
+      sampleSize,
+    };
+  };
+};
+
+module Video = {
+  type facingModeOption = [ | `user | `environment | `left | `right];
+
+  type t('a) = {
+    aspectRatio: option(ConstrainDouble.t),
+    facingMode: option(ConstrainDOMString.t('a)),
+    frameRate: option(ConstrainDouble.t),
+    height: option(ConstrainULong.t),
+    width: option(ConstrainULong.t),
+  };
+
+  let make =
+      (~aspectRatio=?, ~frameRate=?, ~height=?, ~width=?, ~facingMode=?, ()) => {
+    {aspectRatio, frameRate, height, width, facingMode};
   };
 };

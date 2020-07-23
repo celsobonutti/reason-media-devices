@@ -1,6 +1,6 @@
-type videoConstraint_(_) =
+type videoConstraint_('a) =
   | Bool: videoConstraint_(bool)
-  | Constraint: videoConstraint_(Constraints.Video.t);
+  | Constraint: videoConstraint_(Constraints.Video.t('a));
 
 type audioConstraint_(_) =
   | Bool: audioConstraint_(bool)
