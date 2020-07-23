@@ -50,6 +50,31 @@ module ConstrainDOMString = {
   let make: (domString('a), 'a) => 'a = (_kind, value) => value;
 };
 
+// NOTE: Won't work for now. Wait until bucklescript implements automatic
+// mapping from polyvars to JS strings.
+module type DOMStringOptions = {type t;};
+
+module LimitedDOMString = (Options: DOMStringOptions) => {
+  type fields('a) = {
+    exact: option('a),
+    ideal: option('a),
+  };
+
+  type fieldVariants(_) =
+    | Single: fieldVariants(fields(Options.t))
+    | Array: fieldVariants(fields(array(Options.t)));
+
+  type t('a) = 'a;
+
+  let make: (fieldVariants('a), 'a) => 'a = (_kind, value) => value;
+};
+
+module FacingMode = {
+  type t = [ | `user | `environment | `left | `right];
+};
+
+module ConstrainFacingMode = LimitedDOMString(FacingMode);
+
 module Audio = {
   type t = {
     autoGainControl: option(ConstrainBoolean.t),
@@ -88,8 +113,6 @@ module Audio = {
 };
 
 module Video = {
-  type facingModeOption = [ | `user | `environment | `left | `right];
-
   type t('a) = {
     aspectRatio: option(ConstrainDouble.t),
     facingMode: option(ConstrainDOMString.t('a)),
@@ -99,7 +122,19 @@ module Video = {
   };
 
   let make =
-      (~aspectRatio=?, ~frameRate=?, ~height=?, ~width=?, ~facingMode=?, ()) => {
-    {aspectRatio, frameRate, height, width, facingMode};
+      (
+        ~aspectRatio=?,
+        ~frameRate=?,
+        ~height=?,
+        ~width=?,
+        ~facingMode: option((ConstrainDOMString.domString('a), 'a))=?,
+        (),
+      ) => {
+    let facing =
+      switch (facingMode) {
+      | None => None
+      | Some((kind_, value)) => Some(ConstrainDOMString.make(kind_, value))
+      };
+    {aspectRatio, frameRate, height, width, facingMode: facing};
   };
 };

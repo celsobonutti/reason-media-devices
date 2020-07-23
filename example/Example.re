@@ -12,11 +12,7 @@ let audioConstraints =
 
 let videoConstraints =
   Constraints.Video.make(
-    ~facingMode=
-      Constraints.ConstrainDOMString.make(
-        Array,
-        {ideal: Some([|"test", "this", "shit"|]), exact: None},
-      ),
+    ~facingMode=(Single, {ideal: Some("user"), exact: None}),
     (),
   );
 

@@ -1,6 +1,11 @@
+module Track = {
+  type t;
+
+  [@bs.send]
+  external getConstraints: t => 'a = "getConstraints";
+}
+
 type t;
 
-type track;
-
 [@bs.send]
-external getTracks: t => array(track) = "getTracks";
+external getTracks: t => array(Track.t) = "getTracks";
