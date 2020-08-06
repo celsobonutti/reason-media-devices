@@ -1,6 +1,6 @@
 {
   "name": "reason-media-devices",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
@@ -12,14 +12,16 @@
   "author": "Celso Bonutti Filho",
   "license": "MIT",
   "devDependencies": {
-    "bs-platform": "^8.0.3"
+    "bs-platform": "^8.2.0"
   },
   "description": "Hello! w.",
   "main": "index.js",
   "directories": {
     "lib": "lib"
   },
-  "dependencies": {},
+  "dependencies": {
+    "reason-promise": "^1.1.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/celsobonutti/re-media-devices.git"

@@ -18,5 +18,5 @@ external getUserMedia:
     [@bs.ignore] videoConstraint_('video),
     constraints('audio, 'video)
   ) =>
-  Js.Promise.t(MediaStream.t) =
+  Promise.t(MediaStream.t) =
   "getUserMedia";

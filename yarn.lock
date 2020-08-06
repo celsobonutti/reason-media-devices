@@ -2,12 +2,12 @@
 # yarn lockfile v1
 
 
-bs-platform@^8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-8.0.3.tgz#574e41ec04fee381d4c400dac547735368caa48f"
-  integrity sha512-I7wulOPM0/NGamwm9CDh9rGjW1oIKltPwwEIOJrL8DBFRXI8OFSACtWGlpaoOw76Xpf+KcVokr00keS2NlzA3A==
+bs-platform@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-8.2.0.tgz#f3f4c06d5710a4c782f0ed030b1fe11e74a0a6d7"
+  integrity sha512-quvmUac/ZxGDsT7L5+6RNXrLPvLHkWFownacaqlwVoyAm770bPyupTRU49ALPGk3HpjfD5eE+lpGdOSPtuwJiA==
 
-gentype@^3.27.0:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/gentype/-/gentype-3.27.0.tgz#407aad74af94cf455bf471dedd32499aa27095ff"
-  integrity sha512-bHZ6R+FHecYynjC4JPKpUo4nqVxNJZCfeGggGVDXmlgZY+JPfcI//fOB5llD2o+++Srl2xrflOdqyfqg0hlXPw==
+reason-promise@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/reason-promise/-/reason-promise-1.1.1.tgz#966133fed21e748a50ffb8839a1da04912bcf380"
+  integrity sha512-xMXDiyzTjn7t9pq9aQrkgu8CLB5DILU70oWQ+LI20YecshypUwsw37TKOvCxgoFR3vo30ucF0/iWe2BZ181/jw==
