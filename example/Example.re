@@ -12,7 +12,7 @@ let audioConstraints =
 
 let videoConstraints =
   Constraints.Video.make(
-    ~facingMode=(Single, {ideal: Some("user"), exact: None}),
+    ~facingMode=Constraints.ConstrainFacingMode.makeSimple([|`user|]),
     (),
   );
 
@@ -26,7 +26,11 @@ let jsConstraintExample =
   );
 
 let jsBooleanExample =
-  MediaDevices.getJsPromiseUserMedia(Bool, Bool, {audio: false, video: true});
+  MediaDevices.getJsPromiseUserMedia(
+    Bool,
+    Bool,
+    {audio: false, video: true},
+  );
 
 let jsMixedExample =
   MediaDevices.getJsPromiseUserMedia(
@@ -37,17 +41,17 @@ let jsMixedExample =
 
 // Promise.t('a)
 
-let constraintExample = MediaDevices.getUserMedia(
-  ~audio=Constraint(audioConstraints),
-  ~video=Constraint(videoConstraints)
-);
+let constraintExample =
+  MediaDevices.getUserMedia(
+    ~audio=Constraint(audioConstraints),
+    ~video=Constraint(videoConstraints),
+  );
 
-let booleanExample = MediaDevices.getUserMedia(
-  ~audio=Bool(false),
-  ~video=Bool(true)
-);
+let booleanExample =
+  MediaDevices.getUserMedia(~audio=Bool(false), ~video=Bool(true));
 
-let mixedExample = MediaDevices.getUserMedia(
-  ~audio=Bool(true),
-  ~video=Constraint(videoConstraints)
-);
+let mixedExample =
+  MediaDevices.getUserMedia(
+    ~audio=Bool(true),
+    ~video=Constraint(videoConstraints),
+  );

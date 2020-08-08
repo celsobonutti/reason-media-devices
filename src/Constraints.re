@@ -36,37 +36,27 @@ module ConstrainULong = {
 };
 
 module ConstrainDOMString = {
-  type fields('a) = {
-    exact: option('a),
-    ideal: option('a),
+  type t = {
+    exact: option(array(string)),
+    ideal: option(array(string)),
   };
 
-  type domString(_) =
-    | Single: domString(fields(string))
-    | Array: domString(fields(array(string)));
-
-  type t('a) = 'a;
-
-  let make: (domString('a), 'a) => 'a = (_kind, value) => value;
+  let makeSimple = value => {
+    {ideal: Some(value), exact: None};
+  };
 };
 
-// NOTE: Won't work for now. Wait until bucklescript implements automatic
-// mapping from polyvars to JS strings.
 module type DOMStringOptions = {type t;};
 
 module LimitedDOMString = (Options: DOMStringOptions) => {
-  type fields('a) = {
-    exact: option('a),
-    ideal: option('a),
+  type t = {
+    exact: option(array(Options.t)),
+    ideal: option(array(Options.t)),
   };
 
-  type fieldVariants(_) =
-    | Single: fieldVariants(fields(Options.t))
-    | Array: fieldVariants(fields(array(Options.t)));
-
-  type t('a) = 'a;
-
-  let make: (fieldVariants('a), 'a) => 'a = (_kind, value) => value;
+  let makeSimple = value => {
+    {ideal: Some(value), exact: None};
+  };
 };
 
 module FacingMode = {
@@ -115,26 +105,14 @@ module Audio = {
 module Video = {
   type t('a) = {
     aspectRatio: option(ConstrainDouble.t),
-    facingMode: option(ConstrainDOMString.t('a)),
+    facingMode: option(ConstrainFacingMode.t),
     frameRate: option(ConstrainDouble.t),
     height: option(ConstrainULong.t),
     width: option(ConstrainULong.t),
   };
 
   let make =
-      (
-        ~aspectRatio=?,
-        ~frameRate=?,
-        ~height=?,
-        ~width=?,
-        ~facingMode: option((ConstrainDOMString.domString('a), 'a))=?,
-        (),
-      ) => {
-    let facing =
-      switch (facingMode) {
-      | None => None
-      | Some((kind_, value)) => Some(ConstrainDOMString.make(kind_, value))
-      };
-    {aspectRatio, frameRate, height, width, facingMode: facing};
+      (~aspectRatio=?, ~frameRate=?, ~height=?, ~width=?, ~facingMode=?, ()) => {
+    {aspectRatio, frameRate, height, width, facingMode};
   };
 };
